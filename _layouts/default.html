@@ -5,20 +5,27 @@
     </head>
 
     <body>
-        {% include navigation.html %}
-
         <header>
-            <p class="top-text"><strong>Viua VM</strong> <span>Weekly</span></p>
-        </header>
+            <p class="top-text">
+                <strong>Viua VM</strong>
+                <span>Weekly</span>
+            </p>
 
-        <hr>
+            <small>
+                <a href="/">
+                    WEEKLY.VIUAVM.ORG
+                </a>
+            </small>
+            -
+            <small>
+                <a href="http://viuavm.org/">
+                    VIUAVM.ORG
+                </a>
+            </small>
+        </header>
 
         {{ content }}
 
-        <hr>
-
         {% include footer.html %}
-
-        <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
     </body>
 </html>
