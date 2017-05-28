@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    {% include head.html %}
+    </head>
+
+    <body>
+        {% include navigation.html %}
+
+        <header>
+            <p class="top-text"><strong>Viua VM</strong> <span>Weekly</span></p>
+        </header>
+
+        {{ content }}
+
+        <hr>
+
+        {% include footer.html %}
+    </body>
+</html>
