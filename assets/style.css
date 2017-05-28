@@ -8,6 +8,10 @@ header.top-header {
     border-bottom: 1px solid #000;
 }
 
+header.top-header small a {
+    text-transform: uppercase;
+}
+
 header p.top-text {
     font-size: 4em;
     margin: 0 auto;
