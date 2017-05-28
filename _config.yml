@@ -16,8 +16,8 @@
 title: Viua VM weekly
 email: weekly@viuavm.org
 description: > # this means to ignore newlines until "baseurl:"
-    Viua VM weekly blog features summary of recent developments in Viua VM, and
-    is published every Tuesday.
+    A blog covering recent developments in Viua VM and related projects.
+    Posts published every Tuesday.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: viuavm
