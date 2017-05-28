@@ -3,6 +3,8 @@ layout: post
 title:  "Viua VM weekly announcement"
 date:   2017-05-28 12:39:46 +0200
 categories: viuavm update weekly
+weekly_issue_index: 0
+
 ---
 
 Introducing "Viua VM weekly", a blog similar in spirit to [LLVM weekly][llvm-weekly]:
