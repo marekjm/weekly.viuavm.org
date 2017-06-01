@@ -7,9 +7,26 @@ layout: default
 
 <div class="post-list">
     {% for post in site.posts %}
-    <div>
+    <section>
         {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
         <h2>Issue #{{ post.weekly_issue_index }}, {{ post.date | date: date_format }}: <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
-    </div>
+
+        {% if post.sections %}
+        <p> This issue covers:
+        {% endif %}
+
+        {% for each in post.sections %}
+            {% if forloop.first %}
+            <a href="{{ post.url | relative_url }}#{{ each.id }}">{{ each.name }}</a>
+            {% elsif forloop.last %}
+            and <a href="{{ post.url | relative_url }}#{{ each.id }}">{{ each.name }}</a>
+            {% else %}
+            - <a href="{{ post.url | relative_url }}#{{ each.id }}">{{ each.name }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if post.sections %}
+        </p>
+        {% endif %}
+    </section>
     {% endfor %}
 </div>
