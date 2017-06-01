@@ -1,0 +1,14 @@
+{% if page.sections %}
+<section class="post-topics">
+    <h4>Topics:</h4>
+{% endif %}
+
+    {% for each in page.sections %}
+    <p>
+        <a href="#{{ each.id }}">{{ each.name }}</a>
+    </p>
+    {% endfor %}
+
+{% if page.sections %}
+</section>
+{% endif %}
