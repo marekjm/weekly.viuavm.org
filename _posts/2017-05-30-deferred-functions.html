@@ -1,0 +1,117 @@
+---
+layout: post
+title:  "Deferred calls"
+date:   2017-05-30 12:39:46 +0200
+categories: viuavm update weekly pattern-matching messages message-passing interrupts vm deferred-calls stack function-calls calls
+weekly_issue_index: 1
+
+---
+
+<p>
+Not much happened in the last week.
+Some work was done on deferred calls and multiple stacks.
+</p>
+
+<section>
+    <h1>Deferred calls</h1>
+
+    <p>
+        Deferred calls are somewhat similar to <a href="https://blog.golang.org/defer-panic-and-recover">those of Go</a>.
+        Viua now provides a <a href="http://docs.viuavm.org/"><code>defer</code> instruction</a> that registers a call to be performed when
+        current stack frame is being logically discarded.
+    </p>
+
+    <p>
+        Deferred calls are now correctly invoked during the "good" path: on returns and on tailcalls.
+        Invocations during stack unwinding in case of exception are not there, yet, as this has proven to be more
+        tricky to implement.
+    </p>
+
+    <p>
+        What makes deferred calls in Viua less powerful than in Go is the fact that Viua deferred calls are currently run <em>after</em> the frame that
+        registered them is discarded, what means that all pointers to values in that frame are invalidated by the time the deferred call is invoked.
+        This also means that it is (currently) impossible to move or copy values from frame into a deferred call <em>just before</em> the frame is discarded, and
+        to use them in the deferred call's frame.
+        This behaviour is clearly unwanted, and will be fixed in future versions.
+    </p>
+
+    <p>
+        An important note is that deferred calls are made possible because Viua is now able to maintain several different stacks inside a single process.
+    </p>
+</section>
+
+<section>
+    <h1>Multiple stacks</h1>
+
+    <p>
+        Viua is now able to maintain several different stacks inside a single process.
+        Stacks share global and static register sets.
+        Only one stack is ever active so this sharing is safe.
+    </p>
+
+    <h2>Why multiple stacks?</h2>
+
+    <p>
+        While a process encapsulates an execution actor, a single stack encapsulates a call history.
+        And sometimes (maybe even more frequently than one could expect) histories of calls inside process should remain separate.
+        To give a few examples:
+
+        <ul>
+            <li>an interrupt arrives and should be handled</li>
+            <li>the VM must invoke some code in the context of a user process</li>
+            <li>a pattern matching call must be performed</li>
+            <li>a message-filtering call is requested<li>
+        </ul>
+    </p>
+
+    <h3>Interrupts</h3>
+
+    <p>
+        An interrupt arrives and should be handled but the call did not originate from inside the process that handles the interrupt, and
+        bears no relation to what is currently on the active stack.
+    </p>
+
+    <p>
+        This is a perfect opportunity to use multiple stacks.
+        The interrupt-handling function will be called on a separate stack instead of being appended ad-hoc to whatever the process is doing.
+        Call histories remain separate, the interrupt is handled, and the process continues its work.
+    </p>
+
+    <p>
+        Small disclaimer: interrupts are not implemented in Viua VM yet, but are discussed here as their implementation is made possible by the
+        introduction of multiple stacks.
+    </p>
+
+    <h3>VM-invoked code</h3>
+
+    <p>
+        VM may inject code to be executed in context of user processes; e.g. destructors, or deferred calls.
+        Such calls <em>might</em> be appended to the current stack of a process, but that would require hackish code and
+        tricks.
+        A much cleaner and elegant solution is to run VM-invoked calls on separate stacks.
+    </p>
+
+    <p>
+        Exception continuity (i.e. exceptions travelling between calls up the stack in a logical manner) is maintained as the stacks are themselves stacked.
+        If an exception is thrown in a VM-invoked deferred call the exception will be correctly propagated to "parent" stack.
+    </p>
+
+    <h3>Pattern matching and message filtering</h3>
+
+    <p>
+        Both features are just plans, so take this with a pinch of salt.
+    </p>
+
+    <p>
+        Pattern matching and message filtering may be abstracted as function calls.
+        User (or the VM) supplies a function to be used, the VM invokes it on a separate stack, and
+        the result is moved back to the parent stack.
+    </p>
+
+    <p>
+        This model will provide an elegant solution to message filtering.
+        Currently programs running on Viua VM have no means of filtering incoming message except maintaining
+        their own buffer in a global vector and running filters on that.
+        Current solution is usable, but worse than bad, and message filtering (enabled by multiple stacks) will be the solution.
+    </p>
+</section>
