@@ -1,14 +1,19 @@
+<h2> Summary </h2>
+
 {% if page.sections %}
-<section class="post-topics">
-    <h4>Topics:</h4>
+<p> <strong>Topics</strong>:
 {% endif %}
 
     {% for each in page.sections %}
-    <p>
+        {% if forloop.first %}
         <a href="#{{ each.id }}">{{ each.name }}</a>
-    </p>
+        {% elsif forloop.last %}
+        and <a href="#{{ each.id }}">{{ each.name }}</a>
+        {% else %}
+        - <a href="#{{ each.id }}">{{ each.name }}</a>
+        {% endif %}
     {% endfor %}
 
 {% if page.sections %}
-</section>
+</p>
 {% endif %}
