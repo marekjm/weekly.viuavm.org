@@ -1,0 +1,42 @@
+---
+layout: post
+title:  "Not much"
+date:   2017-06-06 23:29:46 +0200
+categories: viuavm update weekly deferred-calls
+weekly_issue_index: 2
+permalink: /issue/2
+sections:
+    -
+        name: Stack traces
+        id: stack-traces
+    -
+        name: Deferred calls
+        id: deferred-calls
+---
+
+<p>
+This was a <em>very</em> slow week.
+Only 8 commits have been pushed to the repository.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">Stack traces</h1>
+
+    <p>
+        Stack traces are now printed to standard error instead of standard output.
+        This simplifies logging and output capture.
+    </p>
+</section>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">Deferred calls</h1>
+
+    <p>
+        Deferred calls are now invoked when stack is being unwound on unhandled exceptions.
+        Suitable test has been added to the test suite.
+    </p>
+</section>
