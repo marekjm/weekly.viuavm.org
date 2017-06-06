@@ -33,6 +33,25 @@ layout: default
         {{ content }}
     </div>
 
+    {% if page.next or page.previous %}
+    <br>
+    {% endif %}
+
+
+    <div>
+        {% if page.next %}
+        <p>
+        <strong>Next</strong>: <a href="{{ page.next.url }}">#{{ page.next.weekly_issue_index }}: {{ page.next.title }}</a>
+        </p>
+        {% endif %}
+
+        {% if page.previous %}
+        <p>
+            <strong>Previous</strong>: <a href="{{ page.previous.url }}">#{{ page.previous.weekly_issue_index }}: {{ page.previous.title }}</a>
+        </p>
+        {% endif %}
+    </div>
+
     {% if site.disqus.shortname %}
     {% include disqus_comments.html %}
     {% endif %}
