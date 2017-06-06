@@ -9,10 +9,12 @@ layout: default
     {% for post in site.posts %}
     <section>
         {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
-        <h2>Issue #{{ post.weekly_issue_index }}, {{ post.date | date: date_format }}: <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+        <h2>Issue #{{ post.weekly_issue_index }}: <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h2>
+
+        <p> <strong>{{ post.date | date: date_format }}</strong>.
 
         {% if post.sections %}
-        <p> This issue covers:
+        This issue covers:
         {% endif %}
 
         {% for each in post.sections %}
@@ -24,9 +26,7 @@ layout: default
             - <a href="{{ post.url | relative_url }}#{{ each.id }}">{{ each.name }}</a>
             {% endif %}
         {% endfor %}
-        {% if post.sections %}
         </p>
-        {% endif %}
     </section>
     {% endfor %}
 </div>
