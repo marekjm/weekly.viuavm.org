@@ -9,7 +9,7 @@ header.top-header {
     border-bottom: 1px solid #000;
 }
 
-header.top-header small a {
+header.top-header a {
     text-transform: uppercase;
 }
 
