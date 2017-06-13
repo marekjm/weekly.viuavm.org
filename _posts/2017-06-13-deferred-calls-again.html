@@ -26,14 +26,13 @@ this is still in the "loose thoughts on paper" phase.
     <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
 
     <p>
-        Deferred calls (when invoked on "normal" returns) are now run before their frame is popped.
+        Deferred calls (when invoked on returns and tail calls) are now run before their frame is popped.
         This allows them to access the values that were defined in their scope (so for example pointers
         work in deferred calls).
     </p>
 
     <p>
-        Invoking deferred calls before popping frames on tailcalls and during stack unwinding is not
-        yet implemented.
+        Invoking deferred calls before popping frames during stack unwinding is not yet implemented.
     </p>
 
     <p>
