@@ -1,0 +1,63 @@
+---
+layout: post
+title:  "Deferred calls. Again."
+date:   2017-06-13 23:06:46 +0200
+categories: viuavm update weekly deferred-calls
+weekly_issue_index: 3
+permalink: /issue/3
+sections:
+    -
+        name: Deferred calls
+        id: deferred-calls
+    -
+        name: Underlying model
+        id: underlying-model
+---
+
+<p>
+This week once again was spent on the implementation of deferred calls.
+I also did some work on defining VM semantics independently of implementation, but
+this is still in the "loose thoughts on paper" phase.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Deferred calls (when invoked on "normal" returns) are now run before their frame is popped.
+        This allows them to access the values that were defined in their scope (so for example pointers
+        work in deferred calls).
+    </p>
+
+    <p>
+        Invoking deferred calls before popping frames on tailcalls and during stack unwinding is not
+        yet implemented.
+    </p>
+
+    <p>
+        However, deferred calls are now invoked during stack unwinding both when the exception is caught, and
+        when it is uncaught.
+        This means that the <em>basic</em> functionality of deferred calls is now implemented and what is left
+        are just incremental improvements and fixes.
+    </p>
+</section>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Apart from starting this blog, I am also thinking about writing about the abstract model of Viua.
+        I am being pushed this way by Ryszard Kubiak (thanks!) and company, and it may well prove useful.
+    </p>
+
+    <p>
+        So far, apart from <a href="http://viuavm.org/media/">a few presentations</a>, there is not much to show
+        in this regard.
+        I have some loose thoughts written in my notebook (the dead tree version) and will convert them to
+        electronic version once I have assembled them into some consistent whole on paper.
+    </p>
+</section>
