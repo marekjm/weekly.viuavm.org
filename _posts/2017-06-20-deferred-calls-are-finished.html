@@ -1,0 +1,146 @@
+---
+layout: post
+title:  "Deferred calls are finished. Coding style is introduced."
+date:   2017-06-20 21:40:31 +0200
+categories: viuavm update weekly deferred-calls
+weekly_issue_index: 4
+permalink: /issue/4
+sections:
+    -
+        name: Deferred calls
+        id: deferred-calls
+    -
+        name: Coding style enforcement
+        id: coding-style-enforcement
+    -
+        name: Better traces
+        id: better-traces
+    -
+        name: Faster tests under Valgrind
+        id: faster-tests-under-valgrind
+---
+
+<p>
+Another weekly post about deferred calls.
+But this time there are also other news.
+A consistent coding style was introduced with the help of <code>clang-format</code>,
+tests are now running faster, and
+debugging may be easier due to enhanced run traces.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Deferred calls took a long time to implement - definitely longer than I expected - and
+        proved not to be the most easy feature to implement.
+        Proper support for this functionality required rearchitecture of how function returns work, and
+        how stacks are unwound.
+        This was because both returns and unwinding must be done in two phases in order to support deferred calls in
+        a way that would be most useful.
+    </p>
+
+    <section>
+        <h2> Function returns and deferred calls </h2>
+
+        <p>
+            When a function returns its frame is popped off the stack.
+            If a deferred call has been scheduled inside this frame it must be executed before the frame is destroyed.
+            Before deferred calls were introduced returning was a simple, atomic action (and still is for frames which
+            do not carry deferred calls).
+            Now it is executed in phases.
+        </p>
+
+        <p>
+            Phase one is simple.
+            When the VM encounters a <code>return</code> instruction it checks if any deferred calls have been registered in
+            the frame that is being popped.
+            If there are any, new stacks are registered in the process being executed (one stack per deferred call), the current stack
+            is suspended, and the VM switches execution to the stack of the last registered deferred call (deferred calls are executed in
+            the reverse order).
+        </p>
+
+        <p>
+            Phase two involves running stacks of deferred calls to completion.
+            After all deferred calls are finished (which may in turn register their own deferred calls, and spawn even more stacks) the execution
+            comes back to the main stack of a process.
+        </p>
+
+        <p>
+            Phase three is entered once control returns to the main stack of a process.
+            It involves just popping the frame off the stack, and destroying its contents - local registers, unused parameters and return value.
+        </p>
+    </section>
+
+    <section>
+        <h2> Exceptions and deferred calls </h2>
+
+        <p>
+            After an exception is thrown it usually propagates a few frames through the call stack.
+            Once a handler frame is found, the stack must be unwound to restore the context for the handler.
+            This sounds easy, but deferred calls introduce a slight complication as they must be run before their
+            frame is removed from the stack.
+        </p>
+
+        <p>
+            Again, this problem is solved by unwinding stack in phases.
+            In phase one the handler frame is found.
+            Then, deferred calls are registered for every frame that would be popped off the stack to restore
+            the context for the handler frame, stack in which the exception was thrown is suspended, and
+            the VM switches execution to the last registered deferred call.
+            In phase two the deferred calls are run to completion, and in phase three the stack is finally unwound.
+        </p>
+    </section>
+
+    <section>
+        <h2> Tail calls and deferred calls </h2>
+
+        <p>
+            Deferred calls are run when the frame they were registered in is popped off the stack.
+            Tail calls in Viua involve popping a frame off the stack, and
+            then pushing the frame of the tail called function on it.
+            This means that deferred calls must be invoked when a tail call is issued.
+        </p>
+
+        <p>
+            The mechanism supporting this is similar to the ones used in function returns and
+            stack unwinding so it is not described here.
+        </p>
+    </section>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        A consistent coding style is now enforced on Viua codebase using the excellent
+        <a href="http://clang.llvm.org/docs/ClangFormat.html">clang-format</a> tool.
+        The style used by Viua can be inspected by looking at the
+        <a href="http://git.savannah.nongnu.org/cgit/viuavm.git/tree/.clang-format?h=devel"><code>.clang-format</code> file</a> in
+        the repository.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        Viua now generates slightly better run traces (enabled by setting the <code>VIUA_ENABLE_TRACING</code> environment
+        variable to <code>yes</code>).
+        New trace lines include frame address (so frame usage can be tracked), stack depth (useful when debugging exceptions), and
+        information about caught values when the caught-slot is not empty.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[3].id }}">{{ page.sections[3].name }}</h1>
+
+    <p>
+        Runtime of test when Valgrind checking is enabled was cut in half by
+        decreasing the number of loop iterations in the programs that slowed Valgrind down the most.
+        These are the programs testing concurrency in Viua, and the long loops are needed to force
+        the scheduler to preempt the processes.
+    </p>
+</section>
