@@ -1,0 +1,208 @@
+---
+layout: post
+title:  "Release 0.9.0"
+date:   2017-06-27 20:19:27 +0200
+categories: viuavm update weekly release
+weekly_issue_index: 5
+permalink: /issue/5
+sections:
+    -
+        name: Release 0.9.0
+        id: release-0-9-0
+    -
+        name: Explicit register set specifiers
+        id: explicit-register-sets
+    -
+        name: Void register
+        id: void-register
+    -
+        name: Text handling (and source code encoding)
+        id: text-handling
+    -
+        name: Deferred calls
+        id: deferred-calls
+    -
+        name: Communication timeouts
+        id: communication-timeouts
+---
+
+<p>
+    On Sunday 25th, version 0.9.0 of Viua VM was released into the world.
+    This issue of Viua VM weekly is a commentary of this release.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        This release is the biggest one in the history of Viua VM, and
+        spans 1287 commits.
+        It is not that surprising, given that previous version (0.8.4) of the VM was
+        released <em><strong>10 months</strong></em> ago.
+    </p>
+
+    <p>
+        Notable changes in this release are discussed in sub-sections below.
+        New features are discussed in their own sections.
+    </p>
+
+    <section>
+        <h2> <code>iota</code> compile-time keyword </h2>
+
+        <p>
+            The new compile-time <code>iota</code> keyword generated an ever-increasing integer
+            starting from 1.
+            It can be used to automatically assign register indexes:
+        </p>
+
+{% highlight asm %}
+    .name: %iota answer     ; will be compiled as '.name: %1 answer'
+    istore %answer local 42
+    print %answer local
+{% endhighlight %}
+
+        <p>
+            It is especially useful when code is changed, as the assembler will
+            reindex the registers automatically and free the programmer from this
+            task.
+        </p>
+    </section>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        The <code>tmpri</code> and <code>tmpro</code> instructions are no longer needed as the VM
+        supports explicit register set specifiers for register operands.
+        This means that to move a value from local register set to the static
+        register set the following instruction can be used:
+    </p>
+
+{% highlight asm %}
+    ; move <target> <source>
+    move %1 static %1 local
+{% endhighlight %}
+
+    <p>
+        ...instead of this sequence:
+    </p>
+
+{% highlight asm %}
+    ress local
+    tmpri %1
+    ress static
+    tmpro %1
+{% endhighlight %}
+
+    <p>
+        Explicit register set specifiers make code shorter and more efficient.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        The new <code>void</code> keyword can be used as a target register.
+        Using void register as the target register will drop the value that
+        would by normally produced by the instruction.
+        Some examples:
+    </p>
+
+{% highlight asm %}
+    ; drop the result of function call (if any)
+    call void foo/0
+
+    ; delete the value
+    move void %1 local
+{% endhighlight %}
+
+    <p>
+        Having void register in the VM means that the old hacks (i.e. using register 0 as
+        "drop the result" register) are no longer necessary.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[3].id }}">{{ page.sections[3].name }}</h1>
+
+    <p>
+        Starting with this release, Viua uses UTF-8 as its internal character
+        set for text values.
+        What is more, a special text type was added to the VM's list of
+        primitive types.
+        Text values must always be valid UTF-8.
+    </p>
+
+    <p>
+        A <code>text*</code> family of instructions was introduced to distinguish text
+        values from a "string of bytes" values produced by <code>strstore</code>
+        instruction.
+    </p>
+
+{% highlight asm %}
+    strstore %1 local "Hello World!"    ; old way of creating text values
+    text %2 local "Hello World!"        ; new way of creating text values
+{% endhighlight %}
+
+    <p>
+        As an additional feature, all values can be casted to text using the
+        <code>text</code> instruction:
+    </p>
+
+{% highlight asm %}
+    istore %1 local 42
+    text %2 local %1 local      ; register 2 will contain text "42"
+{% endhighlight %}
+</section>
+
+<section>
+    <h1 id="{{ page.sections[4].id }}">{{ page.sections[4].name }}</h1>
+
+    <p>
+        A very useful feature.
+        Deferred calls may be registered to be called when the frame they were
+        registered in is popped off the stack (during unwinding, normal returns,
+        or tail calls).
+        They are useful as a debugging aid, and can be used to implement
+        resource management schemes.
+    </p>
+
+    <p>
+        Deferred calls were discussed in previous Viua VM Weekly posts, so they are given
+        less text in this entry.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[5].id }}">{{ page.sections[5].name }}</h1>
+
+    <p>
+        Blocking operations (<code>join</code> and <code>receive</code>) can now specify a timeout for
+        how long they should block a process.
+        The timeout may be specified in seconds, milliseconds, or
+        as the <code>infinity</code> token.
+    </p>
+
+    <p>
+        Some examples:
+    </p>
+
+{% highlight asm %}
+    receive %1 local 1s     ; wait at least 1s for a message to arrive
+
+    join void 100ms         ; wait at least 100ms for a process to
+                            ; become joinable
+    receive %1 local infinity   ; wait indefinitely
+{% endhighlight %}
+
+    <p>
+        It is important to note that timeout durations are not exact, and
+        represent the least amount of time the VM will wait before aborting the operation.
+        The VM will abort the operation as soon as the process gets assigned a time slice, <em>and</em>
+        the timeout has passed.
+    </p>
+</section>
