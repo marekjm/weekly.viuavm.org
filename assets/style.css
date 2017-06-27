@@ -70,12 +70,10 @@ div.post-content section {
 div.post-content section p {
     margin-left: 1%;
     padding-left: 1%;
-    border-left: 1px dashed #888;
 }
 div.post-content section ul {
     margin-left: 1%;
     padding-left: 3%;
-    border-left: 1px dashed #888;
 }
 
 div.post-content section h1 {
