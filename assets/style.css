@@ -29,10 +29,6 @@ footer {
     border-top: 1px solid #000;
 }
 
-div.post-list section {
-    margin: 0;
-    padding: 0;
-}
 div.post-list section h2 {
     margin: 1em 0 0.5em 0;
     padding: 0;
@@ -45,6 +41,46 @@ div.post-list section p {
 header.post-header {
     margin: 0 0 2em 0;
     padding: 0 0 0 0;
+}
+
+@media all and (min-width: 1920px) {
+    div.post-list section {
+        padding: 0;
+        margin: auto;
+        width: 50%;
+    }
+
+    article.post {
+        display: block;
+        margin: auto;
+        width: 50%;
+    }
+}
+@media all and (min-width: 1280px) and (max-width: 1919px) {
+    div.post-list section {
+        padding: 0;
+        margin: auto;
+        width: 60%;
+    }
+
+    article.post {
+        display: block;
+        margin: auto;
+        width: 60%;
+    }
+}
+@media all and (max-width: 1279px) {
+    div.post-list section {
+        padding: 0;
+        margin: auto;
+        width: 90%;
+    }
+
+    article.post {
+        display: block;
+        margin: auto;
+        width: 90%;
+    }
 }
 
 article.post header.post-header h1.post-title {
