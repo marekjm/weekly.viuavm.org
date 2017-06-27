@@ -4,12 +4,13 @@ body {
 }
 
 header.top-header {
+    text-align: center;
     margin: 0 0 3em 0;
     padding: 0 0 1em 0;
     border-bottom: 1px solid #000;
 }
 
-header.top-header a {
+header.top-header nav a {
     text-transform: uppercase;
 }
 
