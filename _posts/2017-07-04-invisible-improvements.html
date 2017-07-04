@@ -1,0 +1,78 @@
+---
+layout: post
+title:  "Invisible improvements"
+date:   2017-07-04 20:06:17 +0200
+categories: viuavm update weekly release
+weekly_issue_index: 6
+permalink: /issue/6
+sections:
+    -
+        name: Undefined behaviour
+        id: undefined-behaviour
+    -
+        name: Leak sanitiser
+        id: leak-sanitiser
+---
+
+<p>
+    Last week has been spent on mostly invisible improvements to the VM code, and
+    there is no user-visible change or enhancement.
+    However, the VM got a little bit more reliable.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Undefined behaviour is the bane of software written in C++.
+        When a compiler detects undefined behaviout in a piece of code it may consider this
+        a "license to kill" - if the behaviour of the software is undefined it may do anything.
+    </p>
+
+    <p>
+        As it turned out, there were a few places in Viua that triggered undefined behaviour.
+        UB was discovered by undefined behaviour sanitiser in bytecode encoding and
+        decoding code - it was caused by misaligned loads and stores.
+    </p>
+
+    <p>
+        The fix was simple: do not load values directly, but use <code>std::memcpy()</code>.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        A second attempt at hardening Viua VM code was inclusion of leak sanitiser.
+        As an extra to Valgrind testing, leak sanitiser should provide an additional layer of
+        verification that Viua manages memory correctly.
+    </p>
+
+    <p>
+        Preventing leaks is important for virtual machines.
+        Being a platform for building software, they should be as tight as possible - ideally
+        they should carefully dispose of every single byte they allocate.
+    </p>
+
+    <p>
+        Careful memory management makes it easier to find bugs when they arise.
+        If the platform manages resources correctly then any unbounded growth must be due to bugs
+        in the client software.
+    </p>
+
+    <p>
+        Is tail recursion used instead of normal recursion?
+        Are processes terminating properly, or are they waiting for some conditions that never
+        become true?
+        Are data structures used suitable for the problem being solved?
+    </p>
+
+    <p>
+        These are just example questions one might ask when confronted with a bug.
+        But when the platform is tight and can be trusted, then that means there is one less
+        place for the bug to hide.
+    </p>
+</section>
