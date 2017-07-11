@@ -1,0 +1,65 @@
+---
+layout: post
+title:  "Static analysis and bit instructions"
+date:   2017-07-11 22:02:39 +0200
+categories: viuavm update weekly
+weekly_issue_index: 7
+permalink: /issue/7
+sections:
+    -
+        name: Static analysis
+        id: static-analysis
+    -
+        name: Bit instructions
+        id: bit-instructions
+---
+
+<p>
+    Once again, the changes that landed during the week are not substantial, and
+    more like little steps forward, slowly but steadily moving the VM further ahead,
+    pushing it to a shape resembling something useful.
+</p>
+
+<p>
+    This week also marks a milestone for Viua as it earned <a href="https://bestpractices.coreinfrastructure.org/projects/581">CII Best Practices</a> "Passing" badge, and
+    run without bugs under <a href="https://clang-analyzer.llvm.org/">Clang static analyser</a>.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Clang static analyser did not found any bugs in Viua VM code.
+        This result gives greater confidence than before that Viua is solid and reliable.
+    </p>
+
+    <p>
+        Next goal is to run warning-free under TSan but it is a bit tricky.
+        If you can help out with making Viua TSan-clear it would be a great opportunity to contribute!
+    </p>
+
+    <section>
+        <h3> Coverity </h3>
+
+        <p>
+            For some, unknown to me, reason Coverity finds only 2% of object files emitted during Viua build.
+            So no Coverity for Viua.
+        </p>
+    </section>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Bit instructions are being implemented on <code>issue/177/5534fb2a/implement-bit-manipulation-instructions</code> branch.
+        New instructions include shifs, rotates, and single bit access to bit strings.
+    </p>
+
+    <p>
+        Bit strings are also intended to support fixed-width integer arithmetic, but instructions for this purpose will be devised at a later time.
+        Probably next week.
+    </p>
+</section>
