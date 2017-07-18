@@ -1,0 +1,189 @@
+---
+layout: post
+title:  "Bit manipulation"
+date:   2017-07-18 22:02:39 +0200
+categories: viuavm update weekly
+weekly_issue_index: 8
+permalink: /issue/8
+sections:
+    -
+        name: Bit manipulation
+        id: bit-manipulation
+---
+
+<p>
+    This week was spent on a single issue: bit manipulation instructions.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Viua is now able to manipulate bit strings.
+        New instructions allow programs to perform bitwise logic operations (and, or, xor, not), shifts, and
+        set and test single bits inside bit strings.
+    </p>
+
+    <p>
+        The full set of new instructions introduced is presented below, with short explanations of what they do.
+    </p>
+
+    <section>
+        <h2> <code>bits</code> instruction </h2>
+
+        <p>
+            This instruction is used to create bit string values.
+            It can either take a register index and create a bit string with width specified by the integer found
+            in the register it received, or a <em>bit string (or binary) literal</em>.
+        </p>
+
+        <p>
+            Bit string literals may be written as binary, octal, or hexadecimal numbers.
+        </p>
+
+        {% highlight asm %}
+bits %1 local 0b10011101
+bits %3 local 0o64014275
+bits %2 local 0xdeadbeef
+        {% endhighlight %}
+
+        <p>
+            One caveat that must be taken into account when using literals is that their width is expanded to the
+            nearest multiple of eigth.
+            For example, if a literal in source code might be encoded using 13 bits it will be actually encoded on
+            16 bits.
+            The expansion is performed by padding the bit string with zeroes on the left (i.e. the higher bits will
+            be zeroes).
+        </p>
+
+        {% highlight asm %}
+bits  %1 local 0b11011  ; a 5-bit wide literal
+print %1 local          ; will print '00011011' (8 bits)
+        {% endhighlight %}
+
+        <p>
+            Literals are a handy syntax when a bit-pattern is known at write- or compile time, and
+            can be used to avoid creating an empty bit strings and enabling bits one-by-one.
+        </p>
+    </section>
+
+    <section>
+        <h2> <code>bitat</code> and <code>bitset</code> instructions </h2>
+
+        <p>
+            The <code>bitat</code> instruction fetches value of the bit at a specified index from a bit string.
+            It needs a target register, a bit string value, and an index:
+        </p>
+
+        {% highlight asm %}
+bits   %1 local 0b10101010
+istore %2 local 1
+bitat  %3 local %1 local %2 local   ; from bit string in register 1, get value of the bit with the index
+                                    ; specified by the integer in register 2, and
+                                    ; put it in register 3
+        {% endhighlight %}
+
+        <p>
+            The <code>bitset</code> instruction sets value of the bit at a specified index inside a bit string,
+            modifying the bit string in-place.
+        </p>
+
+        {% highlight asm %}
+bits   %1 local 0b10101000
+istore %2 local 1
+
+bitset %1 local %2 local true   ; in bit string in register 1, set bit with index specified by the integer
+                                ; in register 2 to true (enable the bit)
+
+bitset %1 local %2 local false  ; in bit string in register 1, set bit with index specified by the integer
+                                ; in register 2 to false (disable the bit)
+
+bitset %1 local %2 local %3 local   ; in bit string in register 1, set bit with index specified by the integer
+                                    ; in register 2 to the boolean value in register 3 (disabling, or enabling
+                                    ; the bit depending on contents of register 3)
+        {% endhighlight %}
+    </section>
+
+    <section>
+        <h2> Bitwise logic </h2>
+
+        <p>
+            The four operations available: <em>and</em>, <em>or</em>, <em>xor</em>, and <em>not</em> are implemented by
+            <code>bitand</code>, <code>bitor</code>, <code>bitxor</code>, and <code>bitnot</code> instructions.
+            The first three instructions share the three-operand structure: output-lhs-rhs, while
+            <code>bitnot</code> has only two operands: output and source.
+        </p>
+
+        {% highlight asm %}
+bits %1 local 0b11001010
+bits %2 local 0b10101100
+
+; in all these instructions register 1 is the left-hand side of the operation, and
+; register 2 is the right-hand side
+bitand %3 local %1 local %2 local
+bitor  %3 local %1 local %2 local
+bitxor %3 local %1 local %2 local
+
+; not registes only one source operand: just the bit string to negate
+bitnot %3 local %1 local
+        {% endhighlight %}
+    </section>
+
+    <section>
+        <h2> Shifts </h2>
+
+        <p>
+            Viua provides instructions to perform arithmetic and logical shifts, in both directions (left and right).
+            All shift instructions have the same operand structure: output-source-offset.
+            Shifted bit strings are modified in-place.
+        </p>
+
+        <p>
+            The output operand (also known as "target register") stores the bits that were "shifted out".
+            For example, if an 8 bit wide bit string is shifted to the left by 3 bits, the target register
+            will store a 3 bit wide bit string.
+        </p>
+
+        {% highlight asm %}
+; all instructions presented below shift the value in register 1 by the
+; number of bits specified by the integer in register 2, and
+; store the "shifted out" bits in register 3
+
+shl  %3 local %1 local %2 local     ; logical shift left
+shr  %3 local %1 local %2 local     ; logical shift right
+ashl %3 local %1 local %2 local     ; arithmetic shift left
+ashr %3 local %1 local %2 local     ; arithmetic shift right
+        {% endhighlight %}
+
+        <p>
+            It is also possible to use <code>void</code> target register as the output of shift instructions to
+            discard the "shifted out" bits if they are not interesting.
+        </p>
+
+        {% highlight asm %}
+shl  void %1 local %2 local
+shr  void %1 local %2 local
+ashl void %1 local %2 local
+ashr void %1 local %2 local
+        {% endhighlight %}
+    </section>
+
+    <section>
+        <h2> Rotates </h2>
+
+        <p>
+            Viua provides instructions to perform left and right bit rotations.
+            Rotations are performed on bit strings in-place.
+        </p>
+
+        {% highlight asm %}
+rol %1 local %2 local   ; rotate, to the left, the bit string in register 1 by
+                        ; number of bits specified by the integer in register 2
+
+ror %1 local %2 local   ; rotate, to the right, the bit string in register 1 by
+                        ; number of bits specified by the integer in register 2
+        {% endhighlight %}
+    </section>
+</section>
