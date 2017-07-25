@@ -1,0 +1,113 @@
+---
+layout: post
+title:  "Fixes. And more fixes."
+date:   2017-07-25 19:45:27 +0200
+categories: viuavm update weekly
+weekly_issue_index: 9
+permalink: /issue/9
+sections:
+    -
+        name: <code>make_unique()</code>
+        id: make-unique
+    -
+        name: Bits in Boolean context
+        id: bits-boolean
+    -
+        name: All-zero bit string literals
+        id: all-zero-bit-string-literals
+    -
+        name: Register set specifiers in assembler and disassembler
+        id: register-set-specifiers-in-asm-and-disasm
+---
+
+<p>
+    This week was spent on bug fixes, and enhancing memory tightness of the core VM.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        There were many places in the VM where the following construction was used:
+    </p>
+
+    {% highlight cpp %}
+unique_ptr<viua::something::Something>(new viua::something::Something(42));
+    {% endhighlight %}
+
+    <p>
+        It was unfortunate, since this construction can lead to memory leaks if an exception is thrown
+        between the construction of new <code>viua::something::Something</code> and
+        the moment it becomes guarded by the <code>unique_ptr</code>.
+        Viua strives to correctly manage its memory, and account for every resource it allocates, so this
+        was clearly unacceptable.
+    </p>
+
+    <p>
+        The solution came in the form of <a href="http://en.cppreference.com/w/cpp/memory/unique_ptr/make_unique"><code>std::make_unique()</code></a>.
+        This function safely allocates memory, constructs an object, and wraps it in a <code>unique_ptr</code>.
+        It also leads to shorter code and less repetition:
+    </p>
+
+    {% highlight cpp %}
+/*
+ * Type is repeated two times, and
+ * memory can be leaked.
+ */
+auto a = unique_ptr<viua::something::Something>(new viua::something::Something(42));
+
+/*
+ * No repetition of 'viua::something::Something', and
+ * it is much less likely that memory will be leaked.
+ */
+auto b = make_unique<viua::something::Something>(42);
+    {% endhighlight %}
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        An embarrassing omission managed to slip past tests: bit strings always evaluated to false when used a Boolean values.
+        This obviously incorrect behaviour was fixed.
+        Bit strings containing at least one enabled bit evaluate to true, bit strings with all zeroes evaluate to false.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        Another bug managed to sneak into the assembler: literal bit strings that were all zeroes were reduced to zero-width strings.
+        This is fixed now, and literal all-zero bit strings are (correctly) reduced to one-zero strings.
+        Examples:
+    </p>
+
+    {% highlight asm %}
+0b00000000  ; is reduced to 0b0
+0o00000000  ; is reduced to 0o0
+0x00000000  ; is reduced to 0x0
+    {% endhighlight %}
+
+    <p>
+        After stripping leading zeroes the width of the literal bit string is expanded to the nearest multiple of 8.
+        This behaviour did not change.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[3].id }}">{{ page.sections[3].name }}</h1>
+
+    <p>
+        Disassembly was fixed for <code>if</code>, <code>streq</code>, <code>insert</code>, and <code>remove</code> instructions.
+        Their target registers were not disassembled with register set specifiers, which could change the meaning of the program being
+        disassembled.
+    </p>
+
+    <p>
+        The <code>if</code> instruction also did not support register set specifiers in source code <em>at all</em>.
+        This is now fixed.
+    </p>
+</section>
