@@ -1,0 +1,60 @@
+---
+layout: post
+title:  "Binary arithmetic"
+date:   2017-08-01 22:35:49 +0200
+categories: viuavm update weekly
+weekly_issue_index: 10
+permalink: /issue/10
+sections:
+    -
+        name: Binary arithmetic
+        id: binary-arithmetic
+---
+
+<p>
+    No changes were pushed to <code>devel</code> branch this week.
+    Everything this post is about is happening on <code>issue/e8113638/math-on-bits</code>.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Viua VM added bit string manipulation to the instruction set some time ago.
+        Now, artihmetic on bit strings is in the works.
+    </p>
+
+    <section>
+        <h2> Rationale </h2>
+
+        <p>
+            Implementing arithmetic in Viua VM that is independent of the underlying hardware
+            is a step forward in making the VM more reliable and predictable.
+            If the arithmetic is wholly contained inside the VM kernel than the VM defines the
+            rules, and can prevent such errors as silent truncation of results.
+        </p>
+    </section>
+
+    <section>
+        <h2> Design </h2>
+
+        <p>
+            The behaviour of bit strings arithmetic is still in a state of flux.
+            Final definition of the semantics of bit string arithmetic will probably not come soon.
+            Most probably there will be two sets of operations: a fixed one, keeping the width of
+            the result the same as the width of the operands; and
+            an "arithmetic" one, extending result as needed.
+        </p>
+    </section>
+
+    <section>
+        <h2> Available operations </h2>
+
+        <p>
+            Operations implemented so far include increment, decrement, addition, subtraction (using two's complement), and
+            multiplication.
+        </p>
+    </section>
+</section>
