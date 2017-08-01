@@ -153,3 +153,9 @@ blockquote {
 a {
     color: #000;
 }
+
+p > code {
+    background-color: #e0e0e0;
+    padding: 0.2em;
+    border-radius: 0.2em;
+}
