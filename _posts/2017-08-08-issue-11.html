@@ -63,6 +63,14 @@ sections:
         calculations requiring the same results that would be produced if you computed them yourself using
         pen and paper (assuming you made no mistake).
     </p>
+
+    <p>
+        What is more, all other type of arithmetic <em>can</em> be implemented in terms of this arithmetic using
+        <code>bitslength</code> instruction (which fetches length of a bit string), and
+        a combination of ifs, throws, division, etc.
+        Due to this fact, this kind of arithmetic will be implemented and made available in a development release first, and
+        then additional kinds of arithmetic will be added to the VM.
+    </p>
 </section>
 
 <section>
