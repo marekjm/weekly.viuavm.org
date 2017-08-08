@@ -1,0 +1,123 @@
+---
+layout: post
+title:  "Different types of arithmetic"
+date:   2017-08-08 21:21:18 +0200
+categories: viuavm update weekly
+weekly_issue_index: 11
+permalink: /issue/11
+sections:
+    -
+        name: Normal arithmetic
+        id: normal-arithmetic
+    -
+        name: Wrapping arithmetic
+        id: wrapping-arithmetic
+    -
+        name: Saturating arithmetic
+        id: saturating-arithmetic
+    -
+        name: Checked arithmetic
+        id: checked-arithmetic
+---
+
+<p>
+    Once again, interesting things happened only on <code>issue/e8113638/math-on-bits</code> and
+    nothing was pushed to <code>devel</code>.
+    Also once again, these "interesting things" only concern arithmetic.
+</p>
+
+<p>
+    Breadth and depth of the topic surprised me.
+    There are at least three kinds of arithmetic: the "normal" one known from school where 8 + 8 equals 16,
+    the "wrapping" one where 8 + 8 equals 6, and
+    the "saturating" one where 8 + 8 equals 9.
+</p>
+
+<p>
+    There is also a fourth kind of arithmetic which is fixed-width but instead of wrapping or saturating it
+    throws exceptions when results go out of range - the "checked" one.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Expected behaviour (assuming range is <code>0</code> to <code>9</code>): <code>8 + 8 = 16</code>.
+    </p>
+
+    <p>
+        Viua will provide a family of arithmetic instructions with "<code>expand</code>" prefix implementing
+        this behaviour, e.g. <code>expandadd</code> and <code>expandmul</code>.
+    </p>
+
+    <p>
+        Arithmetic that provides unsurprising, mathematically satisfying results.
+        Bit width of the numbers is expanded as needed and the programmer does not need to concern themselves
+        with overflows.
+    </p>
+
+    <p>
+        This arithmetic would be most useful when implementing software dealing with "casual math";
+        calculations requiring the same results that would be produced if you computed them yourself using
+        pen and paper (assuming you made no mistake).
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Expected behaviour (assuming range is <code>0</code> to <code>9</code>): <code>8 + 8 = 6</code>.
+    </p>
+
+    <p>
+        Viua will provide a family of arithmetic instructions with "<code>wrap</code>" prefix implementing
+        this behaviour, e.g. <code>wrapadd</code> and <code>wrapmul</code>.
+    </p>
+
+    <p>
+        The arithmetic we all know and love (or hate).
+        This is the behaviour (<strong><em>oversimplification warning!</em></strong>) you get when you program in C++.
+        Sometimes it leads to bugs, but I think that it will not if the behaviour is explicitly requested.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        Expected behaviour (assuming range is <code>0</code> to <code>9</code>): <code>8 + 8 = 9</code>.
+    </p>
+
+    <p>
+        Viua will provide a family of arithmetic instructions with "<code>saturating</code>" prefix implementing
+        this behaviour, e.g. <code>saturatingadd</code> and <code>saturatingmul</code>.
+    </p>
+
+    <p>
+        This kind of arithmetic is used (from what I read) for example in audio processing, to avoid accidentally
+        overflowing values and having the sound distorted.
+        It should be generally useful when working with values that are "capped" and should not exceed a specified range.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[3].id }}">{{ page.sections[3].name }}</h1>
+
+    <p>
+        Expected behaviour (assuming range is <code>0</code> to <code>9</code>): <code>8 + 8</code> throws an overflow exception.
+    </p>
+
+    <p>
+        Viua will provide a family of arithmetic instructions with "<code>checked</code>" prefix implementing
+        this behaviour, e.g. <code>checkedadd</code> and <code>checkedmul</code>.
+    </p>
+
+    <p>
+        This kind of arithmetic is (is it?) used to keep value in a specified range, and
+        warn the programmer when the value somehow goes out-or-range.
+        Prevents bugs.
+    </p>
+</section>
