@@ -1,0 +1,112 @@
+---
+layout: post
+title:  "Move to C++17"
+date:   2017-08-15 20:33:32 +0200
+categories: viuavm update weekly
+weekly_issue_index: 12
+permalink: /issue/12
+sections:
+    -
+        name: Move to C++17
+        id: move-to-cxx-17
+    -
+        name: Function attributes
+        id: function-attributes
+---
+
+<p>
+    It was a slow week for the VM.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        The C++ standard used for Viua VM was updated to C++17.
+        The switch involved nothing more than changing <code>-std=c++14</code> to
+        <code>-std=c++17</code> for <a href="https://gcc.gnu.org/projects/cxx-status.html">GCC</a>, and
+        <code>-std=c++1z</code> for <a href="http://clang.llvm.org/cxx_status.html">Clang</a>.
+    </p>
+
+    <p>
+        The switch was mostly cosmetic, and Viua VM does not currently use C++17 features extensively.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Function attributes augment the syntax used for function headers:
+    </p>
+
+    {% highlight python %}
+'.function:' ( '[[' attribute... ']]' )? function-name
+    {% endhighlight %}
+
+    <p>
+        Intended use for attributes is to provide additional information to the assembler, or
+        instruct the assembler to perform (or <em>not</em> to perform) a specific action with regard
+        to a function.
+    </p>
+
+    <p>
+        For example, a hypothetical <code>inline</code> attribute would instruct the assembler to
+        inline calls to a function.
+    </p>
+
+    <section>
+        <h2> The <code>no_sa</code> attribute </h2>
+
+        <p>
+            The only currently implemented attribute is <code>no_sa</code>, meaning "<em>no static analysis</em>".
+            Its purpose is to disable static analysis on a per-function basis, as opposed to the per-compilation module
+            basis that is now provided via <code>--no-sa</code> assembler flag.
+        </p>
+
+        <p>
+            The attribute is provided as a workaround for bugs (i.e. false positives) in the static analyser supplied by Viua VM.
+            The static analyser is currently unable to use all available information, and
+            is also unable to check some cases but errs on the side of caution and assumes that if it does not know whether an
+            instruction would crash at runtime or not it decides that it <em>would</em> crash and throws an error.
+        </p>
+
+        <p>
+            Sometimes the reported errors may be almost hilariously long because the SA reports the whole trace detailing how
+            it came to the conclusion that the instruction would cause an error.
+        </p>
+
+        <p>
+            The previous workaround for false positives was to split a file into two compilation units: one with the function for
+            which the false positive was reported, and one with the rest of the code.
+            Then, the unit with the single function would be compiled with the <code>--no-sa</code> flag to suppress the errors.
+        </p>
+
+        <p>
+            However, this approach was cumbersome and highly inconvenient.
+            The <code>no_sa</code> attribute will be a much more usable way to suppress false positives.
+        </p>
+    </section>
+
+    <section>
+        <h2> Instruction attributes? </h2>
+
+        <p>
+            This would be similar to the function attributes.
+            The example use case would be to make the `.unused:` directive, that is currently be used to tell the SA that a value
+            produced by an instruction may be unused, into an attribute.
+            The code would look like this:
+        </p>
+
+        {% highlight asm %}
+; this is the current way
+text %1 local "Hello World!"
+.unused: %1
+
+; this would be the "attribute way"
+text [[maybe_unused]] %1 local "Hello World!"
+        {% endhighlight %}
+    </section>
+</section>
