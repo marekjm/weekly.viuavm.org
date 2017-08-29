@@ -1,0 +1,135 @@
+---
+layout: post
+title:  "More, better error messages"
+date:   2017-08-29 19:14:35 +0200
+categories: viuavm update weekly
+weekly_issue_index: 14
+permalink: /issue/14
+sections:
+    -
+        name: New verifier
+        id: new-verifier
+    -
+        name: Compilation with Clang 5
+        id: clang-5x-used-on-travis-ci
+---
+
+<p>
+    This week resulted in almost nothing new being introduced into the VM code base, at
+    least from the user's point of view.
+    On the back end, however, the VM has received some pretty substantial improvements.
+</p>
+
+<p>
+    New verifier is now on the <code>devel</code> branch (the parts that were ready to be deployed, that is),
+    Clang 5 target has been added to the CI build matrix, and the Makefile Viua uses is now shorter (and
+    hopefully easier to understand and maintain).
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        The new verifier is now used for the majority of basic, pre-SA verification of assembler's input (
+        the source code that is to be turned into Viua bytecode).
+    </p>
+
+    <p>
+        Compared with the old, token-based verifier the new one does not add much yet;
+        it is an almost one-to-one port to the parsed-source-based pipeline.
+        The switch away from primitive, token-based analysis without any preprocessing of input (even
+        the most rudimentary parsing) yields small but visible profits, though.
+        Mostly in the quality-of-life department.
+    </p>
+
+    <section>
+        <h2> "Blue" notes </h2>
+
+        <p>
+            If you have written anything for Viua, it is highly probable that you made an error once, and
+            the assembler complained about it to you.
+            For example:
+        </p>
+
+<pre class="viua-sa-output"><code>
+<span class="error-location">sample/asm/errors/global_rs_used_in_lib.asm:21:10:</span> <span class="error-error">error</span>: global register set used by a library function
+<span class="error-location">sample/asm/errors/global_rs_used_in_lib.asm:21:10:</span> <span class="error-note">note</span>: library functions may only use 'local' and 'static' register sets
+
+     19
+     20 .function: foo/0
+<span class="error-location"><span class="error-token">&gt;&gt;&gt;&gt;</span> 21     ress <span class="error-token">global</span></span>
+                 <span class="error-token">^~~~~~</span>
+     22     return
+     23 .end
+
+<span class="error-location">sample/asm/errors/global_rs_used_in_lib.asm:20:12:</span> <span class="error-error">error</span>: in function foo/0
+
+     18 ;
+     19
+<span class="error-location"><span class="error-token">&gt;&gt;&gt;&gt;</span> 20 .function: <span class="error-token">foo/0</span></span>
+                   <span class="error-token">^~~~~</span>
+     21     ress global
+     22     return
+</code></pre>
+
+        <p>
+            Notice the <code>note:</code> line.
+            This is the new element.
+        </p>
+
+        <p>
+            Errors from the assembler may now include notes.
+            Note that notes are not "hints"; the assembler is not playing with you by "hinting" and making you guess what triggered the error.
+            These are additional information that it provides in an attempt to better communicate what it expected at a given location, what
+            caused it to throw the error, etc.
+        </p>
+
+        <p>
+            The end goal is to convert into notes and errors as much of the assembler's knowledge and assumptions as reasonably possible to
+            provide precise error traces, and not only tell <em>what</em> triggered the error, but also to explain <em>how</em> the assembler
+            came to the conclusion that an error should be triggered.
+        </p>
+    </section>
+
+    <section>
+        <h2> Aside notes </h2>
+
+        <p>
+            <em>Aside notes</em> are another addition to the assembler's arsenal when it comes to generating error messages.
+            They are "educated guesses" about what would be a fix to the error, or extra gobbets of information that the assembler has but
+            which fit neither the <code>error:</code> nor <code>note:</code> lines, and are best provided in the immediate context of the
+            source code listing.
+        </p>
+
+        <pre class="viua-sa-output"><code>
+<span class="error-location">bar.asm:2:5:</span> <span class="error-error">error</span>: unknown instruction
+
+     1 .function: main/0
+<span class="error-token">&gt;&gt;&gt;&gt;</span> <span class="error-location">2     <span class="error-token">iztore</span> %1 local 42</span>
+           <span class="error-token">^~~~~~</span>
+           <span class="error-token">^</span> <span class="error-aside-note">did you mean 'istore'?</span>
+     3
+
+<span class="error-location">bar.asm:1:12:</span> <span class="error-error">error</span>: in function main/0
+
+<span class="error-token">&gt;&gt;&gt;&gt;</span> <span class="error-location">1 .function: <span class="error-token">main/0</span></span>
+                  <span class="error-token">^~~~~~</span>
+     2     iztore %1 local 42
+     3
+</code></pre>
+    </section>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Quick news: Viua is now compiled with Clang 5 (the next major version of the Clang compiler)
+        on <a href="https://travis-ci.org/">Travis CI</a>.
+        This means that the code is now compiled by three different compiler versions: GCC 7, Clang 4, and
+        Clang 5.
+        More will versions be added as they become available in Ubuntu PPAs that can be used on Travis.
+    </p>
+</section>

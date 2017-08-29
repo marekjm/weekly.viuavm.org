@@ -159,3 +159,25 @@ p > code {
     padding: 0.2em;
     border-radius: 0.2em;
 }
+
+pre.viua-sa-output {
+    background-color: #000;
+    color: #bbb;
+    padding: 1em;
+}
+
+pre.viua-sa-output code .error-location {
+    color: #fff;
+}
+pre.viua-sa-output code .error-error {
+    color: #e00;
+}
+pre.viua-sa-output code .error-note {
+    color: #4bd;
+}
+pre.viua-sa-output code .error-aside-note {
+    color: #2f5;
+}
+pre.viua-sa-output code .error-token {
+    color: #e60;
+}
