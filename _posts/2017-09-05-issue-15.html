@@ -1,0 +1,133 @@
+---
+layout: post
+title:  "Compile-time errors are the best kind of errors"
+date:   2017-09-05 23:17:57 +0200
+categories: viuavm update weekly
+weekly_issue_index: 15
+permalink: /issue/15
+sections:
+    -
+        name: Improved, type-aware static analyser
+        id: improved-static-analyser
+    -
+        name: Partial type inference
+        id: partial-type-inference
+---
+
+<p>
+    This week was spent on further improvements to the new SA, and making it complete (i.e. making it cover
+    all instructions).
+    The new static analysis is not yet ready, but for supported subset of instructions it is available
+    on <code>devel</code> branch, hidden behind <code>--new-sa</code> option.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        The new SA does not only track register use and warn about leaving values unused, or
+        using uninitialised registers (which the old SA was capable of).
+        It is now also aware of the type of values stored in the registers and is able to catch some errors
+        arising due to use of incorrect type combinations (e.g. shifting bits by a text value, instead of
+        an integer value).
+    </p>
+
+    <section>
+        <h2> Compile-time type errors </h2>
+
+        <p>
+            Catching type errors at compile time (which the new SA is capable of) is another feature of Viua
+            that is intended to improve the reliability of the code that runs on the VM.
+        </p>
+
+        <p>
+            <em>Without</em> static type checking all type error detection is deferred until runtime, when
+            it is sometimes to late to do something about them.
+            <em>With</em> static type checking some type errors can be caught at compile-time which means that
+            invalid programs will not even compile, and, as an effect, will not get the chance to be run and
+            crash.
+        </p>
+
+        <p>
+            Types are attached to values by "constructor instructions" (<code>istore</code>, <code>text</code>,
+            <code>vec</code>, etc.) and then are carried with values during the usual value-movement analysis.
+        </p>
+    </section>
+
+    <section>
+        <h2> Basic type system </h2>
+
+        <p>
+            The fact that SA was made type-aware means that the type system of Viua now manifests at compile
+            time.
+            It also means that, due to the fact that it is actually being used to <em>analyse</em> and
+            <em>verify</em> correctness of Viua VM programs, it might prove useful to spend some time
+            defining and describing it.
+        </p>
+
+        <p>
+            The type-aware SA also serves as a basic documentation for the inputs taken and
+            outputs produced by all instructions, since the SA by necessity codifies all these rules.
+            Without a doubt, though, such a documentation would be more approachable in a form of typical
+            documentation (a human-readable English text, instead of a piece of C++ code).
+        </p>
+    </section>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Sometimes values are being defined by instructions that are not in the "constructor instructions"
+        group, and in such cases, it is not immediately obvious what type a value has.
+        The SA does not bail and complain but instead tries to deduce what type the value is.
+    </p>
+
+    <p>
+        The inferencer used by the SA is quite primitive.
+    </p>
+
+    <section>
+        <h2> Types </h2>
+
+        <p>
+            It looks at the instructions used to manipulate the value, and combines this with the
+            assumptions it has about the types of instructions' operands to infer what type the
+            value contained in registers used as operands has.
+        </p>
+
+        <p>
+            For example, if a value with previously undefined type is used as an input to the
+            <code>iinc</code> instruction the inferencer will assign it the <code>integer</code> type, and
+            if it is used as an operand of <code>texteq</code> instruction the inferencer will decide
+            that the type of the value is <code>text</code>.
+        </p>
+    </section>
+
+    <section>
+        <h2> Pointerness </h2>
+
+        <p>
+            The second piece of information the inferencer deduces is the "pointerness".
+            Basically, a type may exist in two variants: <code>X</code> or <code>pointer to X</code>.
+            Accessing values by-pointer requires using a different access mode than the default direct one.
+        </p>
+
+        <p>
+            The SA ensures that the values are accessed using correct modes; it does not allow using pointers
+            as direct values which is an error.
+            By analysing the access mode used to fetch values from registers the inferencer is able to
+            deduce the pointerness of a value.
+        </p>
+    </section>
+
+    <p>
+        The inferencer is able to deduce the full type of a value (the basic type plus pointerness) in two
+        steps, if needed.
+        It may deduce pointerness without the basic type if the value as accessed as a pointer by an
+        instruction that has no assumptions about basic types (e.g. <code>print</code>, or
+        <code>vpush</code> for pushed operands).
+    </p>
+</section>
