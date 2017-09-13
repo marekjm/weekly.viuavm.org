@@ -1,0 +1,54 @@
+---
+layout: post
+title:  "More work on static analyser"
+date:   2017-09-13 22:17:29 +0200
+categories: viuavm update weekly
+weekly_issue_index: 16
+permalink: /issue/16
+sections:
+    -
+        name: Work on static analyser
+        id: work-on-static-analyser
+    -
+        name: Closure instantiation analysis
+        id: closure-instantiation-analysis
+---
+
+<p>
+    Development of the "new static analyser" is coming to an end.
+    It should be finished in a few more weeks.
+    Old SA will be then removed from the codebase.
+</p>
+
+<p>
+    Updated new SA is available on the <code>devel</code> branch, behind <code>--new-sa</code> flag.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        New SA is nearly finished.
+        What is left are instructions for user defined types, and branches.
+        After the new SA is ready, old one will be removed from the codebase, and
+        test suite will be updated to new errors.
+    </p>
+
+    <p>
+        Some programs written for Viua may stop compiling because of the increased scrutiny
+        they will be subjected to.
+        The errors should not be hard to fix, given traces and explanations provided by the SA.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        SA now checks closure instantiation.
+        This allows for checking if the registers a closure assumes were captured actually <em>are</em>, and
+        if they are of a correct type.
+    </p>
+</section>
