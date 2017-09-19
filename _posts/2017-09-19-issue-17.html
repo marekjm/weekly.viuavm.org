@@ -1,0 +1,40 @@
+---
+layout: post
+title:  "More work on static analyser"
+date:   2017-09-19 22:03:36 +0200
+categories: viuavm update weekly
+weekly_issue_index: 17
+permalink: /issue/17
+sections:
+    -
+        name: Further work on static analyser
+        id: further-work-on-static-analyser
+---
+
+<p>
+    Not much (almost nothing) happened during last week.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <section>
+        <h2> Initial jump analysis </h2>
+        <p>
+            New SA now understands <code>jump</code> instructions and is able to skip groups of
+            instructions that would be skipped by jumps at runtime.
+            <code>if</code> instructions are not yet supported.
+        </p>
+    </section>
+
+    <section>
+        <h2> More "did you mean...?" notes </h2>
+
+        <p>
+            SA now issues "did you mean" notes for mistyped register set names during <code>ress</code>
+            instruction analysis.
+        </p>
+    </section>
+</section>
