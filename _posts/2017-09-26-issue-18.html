@@ -1,0 +1,57 @@
+---
+layout: post
+title:  "Small fixes"
+date:   2017-09-26 20:38:31 +0200
+categories: viuavm update weekly
+weekly_issue_index: 18
+permalink: /issue/18
+sections:
+    -
+        name: Functions are required to specify arity
+        id: functions-are-required-to-specify-arity
+    -
+        name: Detection of invalid operands for "<code>jump</code>" instructions
+        id: detection-of-invalid-operands-for-jump-instructions
+---
+
+<p>
+    This was another slow week, and it resulted in almost no newsworthy developments.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        To disambiguate function names from labels, function names are now required
+        to include an arity specifier at the end.
+        The arity may be undefined for functions which require it.
+    </p>
+
+    {% highlight lua %}
+.function: example/0    -- a function with specified arity of 0 (a nullary function)
+
+.function: example/1    -- a function with specified arity of 1 (an unary function)
+
+.function: example/     -- a function with undefined arity
+    {% endhighlight %}
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Invalid operands for are now reported for <code>jump</code> instructions.
+    </p>
+
+    {% highlight lua %}
+jump +1     -- OK, forward jump
+
+jump -1     -- OK, backward jump
+
+jump here   -- OK, jump to a marker
+
+jump "Hello"    -- jumps to strings (or ints, or bits, etc.) are not allowed
+    {% endhighlight %}
+</section>
