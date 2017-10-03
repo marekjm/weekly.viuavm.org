@@ -1,0 +1,68 @@
+---
+layout: post
+title:  "Improvements to static analyser"
+date:   2017-10-03 23:54:21 +0200
+categories: viuavm update weekly
+weekly_issue_index: 19
+permalink: /issue/19
+sections:
+    -
+        name: Analysis of <code>if</code> instructions
+        id: analysis-of-if-instructions
+    -
+        name: Slightly better error messages
+        id: slightly-better-error-messages
+    -
+        name: Other improvements
+        id: other-improvements
+---
+
+<p>
+    This week brought a bunch of small improvements to the static analyser: better error messages,
+    less crashes, more errors detected at compile- instead of run-time.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        SA is now able to analyse <code>if</code> instructions.
+        It follows both (true and false) branches and provides a trace (after taking true branch here... and
+        after taking false branch here... such and such error is detected) for the errors it throws.
+        This makes reasoning about the reports easier as the SA provides an explanation for how it found the error.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Error trace messages are now a bit easier to decipher because they were made somewhat context-aware.
+        For example, when the SA detects use-of-empty error but the register <em>was</em> at some point defined it will
+        report "use of erased register" instead of "use of empty register" giving additional clues as to the nature of
+        the error.
+    </p>
+
+    <p>
+        Context-awareness of error messages also manifests in other ways, like "swap with empty register" or
+        "copy from empty register".
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        <strong>Negative register indexes</strong> are now detected and cause a compile-time error.
+    </p>
+
+    <p>
+        <strong>Reusing register names</strong> is not allowed and the new SA finally enforces this.
+    </p>
+
+    <p>
+        <strong>Missing operands</strong> now cause an error instead of a crash.
+    </p>
+</section>
