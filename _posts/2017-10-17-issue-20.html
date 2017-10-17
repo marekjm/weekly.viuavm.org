@@ -1,0 +1,84 @@
+---
+layout: post
+title:  "More of the same (the tale of compile-time checks continues)"
+date:   2017-10-17 23:16:40 +0200
+categories: viuavm update weekly
+weekly_issue_index: 20
+permalink: /issue/20
+sections:
+    -
+        name: Explicit register sets
+        id: explicit-register-sets
+    -
+        name: Ifs and jumps
+        id: ifs-and-jumps
+    -
+        name: Various minor fixes
+        id: various-minor-fixes
+---
+
+<p>
+    The focus is still on the static analyser.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        The new static analyser tracks register usage much better than the old one, but does not try
+        to be too clever. One feature that is being axed is the "<code>current</code>" register set.
+        It was introduced as a way of reducing the amount of typing required to get the programs to
+        compile - for every place where the register set name was omitted the assembler would just
+        insert "<code>current</code>" and leave the decision what "current" means until runtime.
+    </p>
+
+    <p>
+        The new static analyser, however, needs all the information it can get to analyser the
+        source code better and detect more bugs at compile time. This means that it wants to know
+        what the "current" register set <em>is</em> and does not try to guess - it is programmer's
+        responsibility to supply the necessary information. New SA will simply abort with an error
+        in some cases where the old one would allow the code to compile.
+    </p>
+
+    <p>
+        This means that the code that compiled under old SA, will not necessarily compile under new
+        one and will have to be updated. Also, the "<code>current</code>" register set will be
+        removed in the next Viua VM release.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Ifs and jumps are checked a little bit differently by the new SA. This is due to some
+        internal code shuffling, but also to changes in other aspects of the SA which made older
+        moder of branch checking infeasible. A bug was introduced in the instruction-counting code
+        that caused the new SA to throw errors when it shouldn't or just crash.
+    </p>
+
+    <p>
+        This was fixed and both "<code>if</code>" and "<code>jump</code>" instructions should now be
+        checked without errors.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        A bunch of other, minor, fixes and improvements was made to the code.
+        For example:
+    </p>
+    
+    <ul>
+        <li> unused value is an error only if it is unused in all branches </li>
+        <li> <code>void</code> can be used as the output operand of <code>receive</code>
+            instructions </li>
+        <li> static analyser not recognizes <code>new</code>, <code>remove</code>, <code>msg</code>
+            and other object-oriented instructions</li>
+        <li> jumps with negative offset are now recognised </li>
+    </ul>
+</section>
