@@ -1,0 +1,106 @@
+---
+layout: post
+title:  "New static analyser merged into main development branch"
+date:   2017-10-31 22:55:18 +0200
+categories: viuavm update weekly
+weekly_issue_index: 21
+permalink: /issue/21
+sections:
+    -
+        name: New static analyser
+        id: new-static-analyser
+    -
+        name: Porting (to new SA) and future-proofing code
+        id: porting-and-future-proofing-code
+---
+
+<p>
+    New static analyser was merged into <code>devel</code> branch.
+    This is a pretty big change.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Expect your code to stop compiling.
+    </p>
+
+    <p>
+        New static analyser has been merged into <code>devel</code> branch and
+        is considered ready to use.
+        It is not bug-free, however, and so you can expect some false positives (the SA
+        errs on the side of caution) and, possibly, a bit of fighting with the analyser.
+        If it will be too much of a PITA you can either slap <code>[[no_sa]]</code> attribute on
+        a function, or pass <code>--no-sa</code> flag to the assembler when compiling a problematic
+        unit.
+    </p>
+
+    <p>
+        The new static analyser does pretty much everything that the old one was doing, but adds
+        additional details to error reports and performs some extra checks.
+    </p>
+
+    <p>
+        One <em>big</em> addition is compile-time type checking and type inference which means that
+        some classes of errors are either completely eliminated or will now surface during
+        compilation (e.g. executing an instruction with an invalid operand type should no longer
+        happen).
+        Type checking and inference works only on instructions, and only on function-by-function
+        basis, which means that every function is analysed in isolation and function calls are not
+        type-checked (this will be implemented in the future).
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        A few notes on the topic of porting your code to new SA, and future proofing it.
+    </p>
+
+    <section>
+        <h2> Explicit register sets </h2>
+
+        <p>
+            Always use explicit register sets.
+            This will prevent many SA errors, and also make your code future-proof as using implicit
+            register sets is a deprecated practice.
+        </p>
+    </section>
+
+    <section>
+        <h2> "Current" register set </h2>
+
+        <p>
+            Do not use "current" register set.
+            This pseudo-register-set is deprecated and will be removed.
+        </p>
+    </section>
+
+    <section>
+        <h2> OO instructions </h2>
+
+        <p>
+            Do not use OO instructions (
+            <code>class</code>,
+            <code>register</code>,
+            <code>new</code>,
+            <code>prototype</code>,
+            <code>msg</code>
+            ).
+            I have doubts as to the quality of their design and implementation.
+            They will most probably be either removed or reworked, and SA was not implemented for them.
+            This lack of support means that code using OO instructions will most probably fail to
+            compile with errors about unused values, using empty registers, or overwriting of unused
+            values.
+        </p>
+
+        <p>
+            The solution to this is to use <code>[[no_sa]]</code> in source code, or
+            passing the <code>--no-sa</code> flag when compiling units using OO instructions.
+        </p>
+    </section>
+</section>
