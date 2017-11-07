@@ -1,0 +1,106 @@
+---
+layout: post
+title:  "Breaking changes, and resumed work on arithmetic"
+date:   2017-11-07 18:46:04 +0200
+categories: viuavm update weekly
+weekly_issue_index: 22
+permalink: /issue/22
+sections:
+    -
+        name: Renamed constructor instructions
+        id: renamed-constructor-instructions
+    -
+        name: Resumed work on the implementation of arithmetic
+        id: resumed-work-on-the-implementation-of-arithmetic
+---
+
+<p>
+    Constructor instruction naming is now more consistent.
+    The work on giving Viua reliable arithmetic is resumed.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Some constructor instructions (i.e. instructions that create completely new values, instead
+        of modifying existing ones, or making modified copies) were renamed to better express what
+        they do, and to make the naming consistent.
+        Now all constructors are spelled as nouns naming the value they create.
+    </p>
+
+    <p>
+        The following instructions were renamed:
+
+        <ul>
+            <li> <code>istore</code> to <code>integer</code> </li>
+            <li> <code>fstore</code> to <code>float</code> </li>
+            <li> <code>strstore</code> to <code>string</code> </li>
+            <li> <code>vec</code> to <code>vector</code> </li>
+        </ul>
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Delayed for quite some time, work on the implementation of arithmetic was
+        resumed this week.
+        Static analyser gained support for arithmetic instructions, and
+        new tests for them were written.
+    </p>
+
+    <p>
+        However, implementing arithmetic takes time.
+        Both signed and unsigned types must be considered, and
+        then there are several variants of arithmetic.
+    </p>
+
+    <p>
+        <strong><em>Wrapping</em></strong> arithmetic is the usual kind used when
+        programming. When your value goes "out of range", you get overflow and
+        the value is reduced modulo 2 (which effectively means that only the
+        <em>n least-significant</em> bits are actually used to store the result).
+        <br>
+        This type of arithmetic has its uses, and is what you typically expect when
+        coming from a C or C++ background.
+    </p>
+
+    <p>
+        <strong><em>Checked</em></strong> arithmetic works like you expect it to;
+        2 plus 2 still gives four, but (assuming unsigned integers are used) 255 plus
+        1 does not wrap to zero but throws an exception.
+        <br>
+        This kind of arithmetic is useful when you <em>need</em> to stay in range no
+        matter what happens and you need to be notified when you would venture into the
+        land of wraparound if not for the overflow checks performed by checked arithmetic.
+    </p>
+
+    <p>
+        <strong><em>Saturating</em></strong> arithmetic ensures that you stay in range, but
+        does not throw exceptions when you would go out of it - the value simply becomes
+        "saturated".
+        For example (assuming 8 bit unsigned integers) 253 + 8 gives 255 as 255 is the
+        maximum representable value; similarly, 4 - 8 does not produce wraparound, it simply
+        gives 0.
+        <br>
+        Saturating arithmetic is useful when "clipping" values is preferable to getting bogus
+        results, e.g. increasing audio volume using the analog knob should not, after some
+        time, result in the audio being muted - it should just reach the maximum level and
+        stop increasing.
+    </p>
+
+    <p>
+        <strong><em>Expanding</em></strong> arithmetic is the "natural" one.
+        In contrast to the previous three kinds it does not operate on fixed-size integers.
+        Under expanding arithmetic there is no wraparound, no saturation, and no "out of
+        range" errors - values just grow as needed and the range of representable integers is
+        limited only be the memory available to the program.
+        In practice, though, Viua is expected to be able to handle numbers that can be
+        represented using 2<sup>64</sup> binary digits (which still gives you plenty of wiggle
+        room for fancy calculations).
+    </p>
+</section>
