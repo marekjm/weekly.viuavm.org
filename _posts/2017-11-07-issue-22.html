@@ -62,8 +62,9 @@ sections:
     <p>
         <strong><em>Wrapping</em></strong> arithmetic is the usual kind used when
         programming. When your value goes "out of range", you get overflow and
-        the value is reduced modulo 2 (which effectively means that only the
-        <em>n least-significant</em> bits are actually used to store the result).
+        the value is reduced modulo 2<sup>N</sup> where N is the width of the
+        integer (which effectively means that only the <em>n least-significant</em>
+        bits are actually used to store the result).
         <br>
         This type of arithmetic has its uses, and is what you typically expect when
         coming from a C or C++ background.
