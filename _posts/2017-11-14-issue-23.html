@@ -1,0 +1,75 @@
+---
+layout: post
+title:  "A bit of arithmetic"
+date:   2017-11-14 21:59:06 +0200
+categories: viuavm update weekly
+weekly_issue_index: 23
+permalink: /issue/23
+sections:
+    -
+        name: Wrap-around (modulo) arithmetic
+        id: wrap-around-modulo-arithmetic
+    -
+        name: Checked arithmetic
+        id: checked-arithmetic
+    -
+        name: Removed support for Clang 4.0
+        id: removed-support-for-clang-4-0
+---
+
+<p>
+    New arithmetic instructions have been implemented for Viua.
+    They should mostly work, but need further testing.
+    However, the instructions implemented so far are not even a half of what is needed to fully support
+    wrap-around, checked, and saturating arithmetic modes.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Wrap-around arithmetic has been fully implemented for both signed and unsigned integers.
+        Viua now provides <code>wrapadd</code>, <code>wrapmul</code>, and <code>wrapdiv</code> instructions.
+    </p>
+
+    <p>
+        The new instructions are tested for 8 bit integers, but should work for any other bit width (the
+        algorithms are the same no matter what bit width is used for the integers).
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Viua now provides checked versions of addition, multiplication, and division for signed integers.
+        There is no implementation yet for unsigned numbers, and division needs more testing.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        Compilation with Clang 4.0 was problematic.
+        The version of <code>libstdc++</code> that Clang 4 could understand it didn't include the
+        headers (e.g. <code>&lt;optional&gt;</code>) required to compile Viua.
+        But when the <code>libstdc++</code> was updated - Clang 4 would no longer be able to compile the
+        standard library, since it was missing support for class template argument deducation (I think).
+    </p>
+
+    <p>
+        This resulted in the support for compilation with Clang 4 being simply pulled, and
+        the Clang 4.0 entry removed from CI build matrix.
+    </p>
+
+    <p>
+        This <em>does not</em> mean that Clang cannot be used to compile Viua <em>at all</em>.
+        Clang 5 is a fine compiler and is able to understand all of Viua source code, and all the new C++
+        features used in newer <code>libstdc++</code> versions.
+        Viua is not guaranteed to compile under Clang 4 and below, but with Clang 5 and above you should not
+        encounter any problems.
+    </p>
+</section>
