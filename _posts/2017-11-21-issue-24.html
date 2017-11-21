@@ -1,0 +1,36 @@
+---
+layout: post
+title:  "Saturating increment and decrement"
+date:   2017-11-21 23:38:23 +0200
+categories: viuavm update weekly
+weekly_issue_index: 24
+permalink: /issue/24
+sections:
+    -
+        name: Saturating arithmetic
+        id: saturating-arithmetic
+---
+
+<p>
+    This was a somewhat slow week and only a few changes landed in Viua.
+    Two new instructions are usable, which brings Viua a tiny bit closer to the goal of supporting wrapping,
+    checked, and saturating arithmetic for signed and unsigned integers.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Signed saturating arithmetic increment (<code>saturatingsincrement</code>) and
+        decrement (<code>saturatingsdecrement</code>) instructions were implemented.
+        For now, these are the only ones that are usable for saturating arithmetic.
+    </p>
+
+    <p>
+        For a project implementing efficient saturating arithmetic in C++ look at Stefan Hamminga's
+        <a href="https://github.com/StefanHamminga/saturating_types">saturating_types</a> repository on
+        GitHub.
+    </p>
+</section>
