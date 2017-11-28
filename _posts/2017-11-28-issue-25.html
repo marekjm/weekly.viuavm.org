@@ -1,0 +1,82 @@
+---
+layout: post
+title:  "Tests, failures, bugs"
+date:   2017-11-28 21:23:37 +0200
+categories: viuavm update weekly
+weekly_issue_index: 25
+permalink: /issue/25
+sections:
+    -
+        name: More test configurations
+        id: more-test-configurations
+    -
+        name: Possible compilation failures
+        id: possible-compilation-failures
+    -
+        name: Issue tracker embedded in Git repository
+        id: issue-tracker-embedded-in-git-repository
+    -
+        name: About saturating arithmetic
+        id: about-saturating-arithmetic
+---
+
+<p>
+    This week was mainly spent on infrastructure around the VM;
+    CI, test configurations, and issue tracking.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Tests run on <a href="https://travis-ci.org/marekjm/viuavm/builds">CI</a> now run under three
+        configurations:
+        1/ with sanitisers enabled,
+        2/ with sanitisers disabled but under Valgrind,
+        3/ with sanitisers disabled but with high optimisation level.
+    </p>
+
+    <p>
+        Each CI run is now much longer, but the results are more useful.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Compilation of Viua may fail on machines with 4GB or less of RAM with high levels of optimisation
+        enabled (<code>-O3</code>).
+        This affects compilation of assembler middle-end (the part that converts tokenised source code into
+        compiled bytecode), and static analyser (the code that checks types and register usage is
+        <em>huge</em> and a bit complicated).
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        Apart from issue tracker on GitHub (which contains only the most "prominent" ones), issues are also
+        collected in the <a href="https://github.com/marekjm/issue"><code>issue</code></a> tool repository.
+        This repository is now embedded inside Viua's Git repository.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[3].id }}">{{ page.sections[3].name }}</h1>
+
+    <p>
+        I good resource to read about saturating arithmetic can be found on prof. John Regehr's
+        <a href="https://blog.regehr.org/archives/277">Embedded in Academia</a> website.
+    </p>
+
+    <p>
+        Also, I found a template-heavy implementation of saturating arithmetic
+        <a href="https://github.com/StefanHamminga/saturating_types">for C++</a>.
+        It is an incredibly interesting read if you're interested in saturating arithmetic (or how to
+        write useful templates in C++).
+    </p>
+</section>
