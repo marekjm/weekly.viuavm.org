@@ -106,6 +106,7 @@ div.post-content section {
 div.post-content section p {
     margin-left: 2em;
     padding-left: 1em;
+    line-height: 1.4em;
 }
 div.post-content section ul {
     margin-left: 2em;
@@ -155,9 +156,9 @@ a {
 }
 
 p > code {
-    background-color: #e0e0e0;
-    padding: 0.2em;
-    border-radius: 0.2em;
+    background-color: #f1f1f1;
+    padding: 0.1em;
+    border-radius: 0.1em;
 }
 
 pre.viua-sa-output {
