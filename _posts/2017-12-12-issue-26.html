@@ -1,0 +1,87 @@
+---
+layout: post
+title:  "Signed fixed-width arithmetic implementation is complete"
+date:   2017-12-12 20:21:32 +0200
+categories: viuavm update weekly
+weekly_issue_index: 26
+permalink: /issue/26
+sections:
+    -
+        name: Saturating signed division
+        id: saturating-signed-division
+    -
+        name: Fixed width arithmetic in devel branch
+        id: fixed-width-arithmetic-in-devel-branch
+    -
+        name: Preparations for better type checker
+        id: preparations-for-better-type-checker
+---
+
+<p>
+    Last two weeks were <em>slow</em>.
+    Not much happened.
+    Mostly small improvements, and some work around the VM (CI maintenance, checking compiler behaviour, etc.).
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Saturating signed division instruction <code>saturatingsdiv</code> was implemented.
+        This was the last instruction to be implemented for signed values, which means that the signed
+        fixed-width arithmetic implementation is now (mostly) complete.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Signed fixed-width arithmetic instructions
+        <a href="http://git.savannah.nongnu.org/cgit/viuavm.git/commit/?h=devel&id=c9c46309c70e6bc2f8ac8b96d970ebd6f47959cd"><code>were merged</code></a>
+        into <a href="http://git.savannah.nongnu.org/cgit/viuavm.git/log/?h=devel"><code>devel</code> branch</a>.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[2].id }}">{{ page.sections[2].name }}</h1>
+
+    <p>
+        Current type checker for Viua VM assembly is incredibly limited, and is unable to check more complex
+        types.
+        This comes mostly from the limitations of the type inferencer.
+        "Complex type" means that the type is parametrised by more than one value (or the parametrisation goes
+        more than one level deep).
+    </p>
+
+    <p>
+        As an example: the inferencer is able to correctly and fully deduce a type "pointer to
+        <code>T</code>", but is unable to deduce "vector of pointer to <code>T</code>" and will leave such
+        values as "vector of pointer to value" which means that anything goes.
+        The final goal for the inferencer and checker is to be able to deduce arbitratily nested types, e.g.
+        "pointer to vector of vector of pointer to text" (in C++ this would be
+        "<code>std::vector&lt;std::vector&lt;std::string*&gt;&gt;*</code>".
+        Type checker could then use the detailed types to better verify programs.
+    </p>
+
+    <p>
+        What is more, the static analyser could employ the richer type information provided by the enhanced
+        inferencer to check things other than types:
+        <strong>1/</strong> process joinability,
+        <strong>2/</strong> bit shifts and operations (i.e. ensuring that matching widths are used, or that
+        no narrowing conversions happen),
+        <strong>3/</strong> whether fixed width arithmetic operations are used consistently,
+        etc.
+    </p>
+
+    <p>
+        There are no plans, though, to extend the support to verify types of fields in structures.
+        The type checker and static analyser will only ensure that the types are used consistently, but Viua
+        VM assembly will not provide a way to declare types for structure fields (similarly as it does not
+        provide a way to declare types of functions - they are only verified for consistency of use, not
+        declared explicitly).
+        This functionality will be left for higher-level languages.
+    </p>
+</section>
