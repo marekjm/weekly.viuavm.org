@@ -1,0 +1,62 @@
+---
+layout: post
+title:  "Wiring improvements"
+date:   2017-12-19 18:12:09 +0200
+categories: viuavm update weekly
+weekly_issue_index: 27
+permalink: /issue/27
+sections:
+    -
+        name: Signed subtraction
+        id: signed-subtraction
+    -
+        name: Improved memory safety during exception handling
+        id: improved-memory-safety-during-exception-handling
+---
+
+<p>
+    Last week was spent on implementation of subtraction instructions, and
+    on improving machine's internals.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        It turned out that dedicated subtraction instructions are needed after all.
+    </p>
+
+    <p>
+        For wrapping arithmetic a separate subtraction instruction is not as critical as for the other types
+        of arithmetic.
+        There subtraction is just the regular "flip the bits, add one" and add.
+        However, for checked or saturating arithmetic additional checks must be done and that justifies adding
+        additional opcodes to the VM's instruction set:
+        <code>checkedssub</code> (checked signed subtraction),
+        <code>checkedusub</code> (checked unsigned subtraction),
+        <code>saturatingssub</code> (saturating signed subtraction),
+        <code>saturatingusub</code> (saturating unsigned subtraction), and
+        <code>wrapsub</code> (wrapping subtraction).
+    </p>
+
+    <p>
+        For now, only the signed versions were implemented.
+        Unsigned versions will be implemented with the rest of unsigned arithmetic instructions.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Exception handling is the last part of Viua where one can see naked "<code>new</code>" and
+        "<code>delete</code>".
+        During this week a rework operation has been started to move to <code>std::unique_ptr</code> for all
+        exception handling.
+        Lifetimes of all values inside Viua (that are visible to the user code, as exceptions are) are managed
+        through <code>std::unique_ptr</code>s, and exceptions were the last holdouts not abiding by this rule.
+        This will change during the following week.
+    </p>
+</section>
