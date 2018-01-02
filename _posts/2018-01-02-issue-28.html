@@ -1,0 +1,63 @@
+---
+layout: post
+title:  "Document all the things!"
+date:   2018-01-02 19:35:33 +0200
+categories: viuavm update weekly
+weekly_issue_index: 28
+permalink: /issue/28
+sections:
+    -
+        name: A new take on documentation
+        id: a-new-take-on-documentation
+    -
+        name: Finished exception-handling wiring rework
+        id: finished-exception-handling-wiring-rework
+---
+
+<p>
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Another attempt at documenting user-visible Viua interface is being made.
+        There are several things that require attention, and which <em>have to</em> be documented.
+        In no particular order:
+    </p>
+
+    <ul>
+        <li> the instruction set </li>
+        <li> what is a register? </li>
+        <li> what is a <em>register set</em>? </li>
+        <li> how to access values held in registers? </li>
+        <li> what is the execution model of the VM (asynchronously communicating processes)? </li>
+        <li> how to send and receive messages? </li>
+        <li> how to handle errors? </li>
+        <li> how to do I/O? </li>
+    </ul>
+
+    <p>
+        These are all important issues, but Viua does not currently provide documentation for them in any
+        form.
+        There are several articles in a few places, almost 600 example programs written for Viua, but this is
+        not enough for the VM to be usable.
+    </p>
+
+    <p>
+        The newest place when documentation can be found is <a href="https://docs.viuavm.org/manual.txt">here</a>.
+        It combines documentation of available instructions with explanations of the core concepts of Viua VM:
+        registers, register sets, value lifetimes, types, processes, messages, exceptions and error handling.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        Explicit <code>new</code>s were removed from Viua code, removing the last place where naked pointers
+        to dynamically allocated objects were used and increasing the overall reliability of Viua VM.
+    </p>
+</section>
