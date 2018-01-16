@@ -1,0 +1,55 @@
+---
+layout: post
+title:  "More documentation"
+date:   2018-01-16 19:15:06 +0200
+categories: viuavm update weekly
+weekly_issue_index: 30
+permalink: /issue/30
+sections:
+    -
+        name: Documentation for tools
+        id: documentation-for-tools
+---
+
+<p>
+    Last week was spent only on writing documentation.
+    No new code was introduced to the codebase of the VM.
+    The work will most likely resume after most currently available features are documented.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Basic documentation is now available for
+        <a href="https://docs.viuavm.org/manual.html#4-1">assembler</a>,
+        <a href="https://docs.viuavm.org/manual.html#4-2">kernel</a>,
+        and <a href="https://docs.viuavm.org/manual.html#4-3">assembler</a>.
+    </p>
+
+    <h3>Assembler</h3>
+
+    <p>
+        Features of the assembler (type checking, static control-flow and register access analysis, type
+        inference) are now shortly described.
+        Also, it is noted that the assembler also performs the role of the linker.
+    </p>
+
+    <h3>Kernel</h3>
+
+    <p>
+        Kernel <a href="https://docs.viuavm.org/manual.html#4-2-1">environment variables</a> are described.
+        These variables may be used to tune some aspects of the kernel, or enable execution traces which are
+        useful for debugging your programs (or the VM).
+    </p>
+
+    <h3>Disassembler</h3>
+
+    <p>
+        A brief description is provided, along with the list of its deficiencies.
+        Disassembler is probably the least-frequently used tool of the three, so these deficiencies are not
+        high on the list of priorities (for now, at least).
+    </p>
+</section>
