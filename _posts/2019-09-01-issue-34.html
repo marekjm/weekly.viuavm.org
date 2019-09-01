@@ -1,0 +1,83 @@
+---
+layout: post
+title:  "Slow, but (almost) steady"
+date:   2019-09-01 02:57:00 +0200
+categories: viuavm update weekly
+weekly_issue_index: 32
+permalink: /issue/32
+sections:
+    -
+        name: Still alive
+        id: still-alive
+    -
+        name: I/O schedulers and instructions
+        id: io-schedulers-and-instructions
+---
+
+<p>
+    No technical information in this post. It's mostly an update on the general
+    state of things in the Viua VM-land.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Viua VM is not dead. The rumours about its demise were greatly
+        exaggerated. In fact, it is the best shape it ever was and has
+        seen usage in almost-real-world projects (I was dogfooding during my
+        engineer's degree final project).
+    </p>
+
+    <p>
+        However, the development substantially slowed down in recent times.
+        There's no denying that the amount of code I put out there is in no way
+        comparable to what it used to be. This is particularly due to the amount
+        of work I had to do in the academia (a degree does not earn itself) and
+        industry (the bills do not want to pay themselves). This are just lazy
+        excuses, though.
+    </p>
+
+    <p>
+        Hopefully, the pace of progress should now pick up a little as I have a
+        bit more free time on my hands. If it doesn't - too bad, but the VM is
+        definitely not dead.
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        One of the most recent additions were I/O schedulers and I/O
+        instructions. In theory, they should take some load off of FFI
+        schedulers which were until now used to execute both CPU-related and
+        I/O-related calls.
+    </p>
+
+    <p>
+        I/O is based on ports, requests, and interactions.
+
+        First you open an I/O port (it can represent a file, a socket, a pipe,
+        etc.). Then, you use this port to submit I/O requests to the kernel and
+        then to I/O schedulers.
+
+        User code sees the I/O operation to perform as an "I/O&nbsp;request"
+        value, the kernel sees it as an "I/O&nbsp;interaction" to perform - they
+        are both linked together by an ID assigned to every I/O interaction.
+    </p>
+
+    <p>
+        While an I/O scheduler goes about executing an I/O interaction the user
+        code may wait for an I/O request to become complete (either successfully
+        or with an error) or cancel it. I/O is performed asynchronously (after
+        an I/O interaction is submitted the user code just receives a handle, in
+        the form of an I/O request value) and the user code is not blocked.
+        It must explicitly block on an I/O request by using the
+        <code>io_wait</code> instruction.
+        Alternatively, if the request does not complete for too long it may be
+        cancelled using the <code>io_cancel</code> instruction.
+    </p>
+</section>
