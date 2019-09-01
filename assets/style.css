@@ -84,7 +84,7 @@ header.post-header {
 }
 
 article.post header.post-header h1.post-title {
-    font-size: 2.4em;
+    font-size: 2em;
     margin: 0;
     padding: 0;
 }
@@ -107,6 +107,7 @@ div.post-content section p {
     margin-left: 2em;
     padding-left: 1em;
     line-height: 1.4em;
+    text-align: justify;
 }
 div.post-content section ul {
     margin-left: 2em;
@@ -126,19 +127,19 @@ div.post-content section h6 {
     padding: 0;
 }
 div.post-content section h1 {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 div.post-content section h2 {
-    font-size: 1.8em;
-}
-div.post-content section h3 {
-    font-size: 1.6em;
-}
-div.post-content section h4 {
     font-size: 1.4em;
 }
-div.post-content section h5 {
+div.post-content section h3 {
+    font-size: 1.3em;
+}
+div.post-content section h4 {
     font-size: 1.2em;
+}
+div.post-content section h5 {
+    font-size: 1.1em;
 }
 div.post-content section h6 {
     font-size: 1em;

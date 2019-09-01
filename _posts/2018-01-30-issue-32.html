@@ -1,0 +1,80 @@
+---
+layout: post
+title:  "Documentation continues"
+date:   2018-01-30 19:44:17 +0200
+categories: viuavm update weekly
+weekly_issue_index: 32
+permalink: /issue/32
+sections:
+    -
+        name: Documentation effort continues
+        id: documentation-effort-continues
+    -
+        name: PDF version
+        id: pdf-version
+---
+
+<p>
+    Once again, not much happened except for new documentation being written.
+</p>
+
+<hr>
+
+<section>
+    <h1 id="{{ page.sections[0].id }}">{{ page.sections[0].name }}</h1>
+
+    <p>
+        Documentation for Viua VM has been expanded by quite a few new chapters in the last week.
+        The document has also been renamed to "Viua VM manual".
+    </p>
+
+    <p>
+    Among the new instructions that were documented are
+    <a href="https://docs.viuavm.org/manual.html#6-25"><code>process</code></a>,
+    <a href="https://docs.viuavm.org/manual.html#6-18"><code>join</code></a> (both for concurrency),
+
+    <a href="https://docs.viuavm.org/manual.html#6-10"><code>function</code></a> (create a function ref),
+    <a href="https://docs.viuavm.org/manual.html#6-3"><code>call</code></a>,
+    <a href="https://docs.viuavm.org/manual.html#6-23"><code>pamv</code></a> (pass a parameter by move),
+    <a href="https://docs.viuavm.org/manual.html#6-24"><code>param</code></a> (pass a parameter by copy),
+    <a href="https://docs.viuavm.org/manual.html#6-27"><code>return</code></a>,
+    <a href="https://docs.viuavm.org/manual.html#6-8"><code>frame</code></a> (construct a call frame),
+    <a href="https://docs.viuavm.org/manual.html#6-2"><code>arg</code></a> (obtain passed argument),
+
+    and
+    <a href="https://docs.viuavm.org/manual.html#6-13"><code>import</code></a>.
+    </p>
+
+    <p>
+        The manual is now in an overall better shape as more references are now being used in text;
+        especially the HTML version is now much more usable as the refs allow the reader to jump from
+        one interesting section to the next.
+    </p>
+
+    <h2>Future content</h2>
+
+    <p>
+        The manual now also includes two sections that are just stubs to be be expanded in the future, but
+        are tremendously important - the environment (that the VM provides), and the standard library.
+    </p>
+
+    <p>
+        The first one will describe the environment in which the programs running on Viua VM are executed;
+        this includes program organisation, description of available error handling techniques, how
+        concurrency is realised in the VM, etc.
+    </p>
+
+    <p>
+        The second will describe the standard library supplied with the VM (which so far is of poor
+        quality, and extremely limited usefulness).
+    </p>
+</section>
+
+<section>
+    <h1 id="{{ page.sections[1].id }}">{{ page.sections[1].name }}</h1>
+
+    <p>
+        A <a href="https://docs.viuavm.org/manual.pdf">PDF version</a> has been made available to
+        accompany the HTML and plaintext versions.
+    </p>
+</section>
